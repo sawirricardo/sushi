@@ -31,6 +31,16 @@ trait Sushi
         return property_exists(static::class, 'rows');
     }
 
+    protected function sushiCacheFileName()
+    {
+        return config('sushi.cache-prefix', 'sushi').'-'.Str::kebab(str_replace('\\', '', static::class)).'.sqlite';
+    }
+
+    protected function sushiCacheDirectory()
+    {
+        return realpath(config('sushi.cache-path', storage_path('framework/cache')));
+    }
+
     public static function resolveConnection($connection = null)
     {
         return static::$sushiConnection;
@@ -40,8 +50,8 @@ trait Sushi
     {
         $instance = (new static);
 
-        $cacheFileName = config('sushi.cache-prefix', 'sushi').'-'.Str::kebab(str_replace('\\', '', static::class)).'.sqlite';
-        $cacheDirectory = realpath(config('sushi.cache-path', storage_path('framework/cache')));
+        $cacheFileName = $instance->sushiCacheFileName();
+        $cacheDirectory = $instance->sushiCacheDirectory();
         $cachePath = $cacheDirectory.'/'.$cacheFileName;
         $dataPath = $instance->sushiCacheReferencePath();
 
